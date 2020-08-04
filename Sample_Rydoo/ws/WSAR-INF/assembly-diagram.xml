@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wdnm:Diagram xmlns:wdnm="http://workday.com/studio/editors/notation">
+  <element href="assembly.xml#WorkdayAssembly"/>
+  <visualProperties x="54" y="90">
+    <element href="assembly.xml#StartHere"/>
+  </visualProperties>
+  <visualProperties x="310" y="200">
+    <element href="assembly.xml#Route"/>
+  </visualProperties>
+  <visualProperties x="456" y="210">
+    <element href="assembly.xml#AsyncMediation0"/>
+  </visualProperties>
+  <visualProperties x="532" y="61">
+    <element href="assembly.xml#AsyncMediation1"/>
+  </visualProperties>
+  <visualProperties x="216" y="90">
+    <element href="assembly.xml#Call_Retrieve_Expense_Files"/>
+  </visualProperties>
+  <visualProperties x="45" y="245">
+    <element href="assembly.xml#Retrieve_Expense_Files"/>
+  </visualProperties>
+  <visualProperties x="753" y="27">
+    <element href="assembly.xml#Splitter"/>
+  </visualProperties>
+  <visualProperties x="386" y="326">
+    <element href="assembly.xml#Process_Individual_File"/>
+  </visualProperties>
+  <visualProperties x="962" y="86">
+    <element href="assembly.xml#Call_Process_Individual_File"/>
+  </visualProperties>
+  <visualProperties x="554" y="359">
+    <element href="assembly.xml#AsyncMediation"/>
+  </visualProperties>
+  <visualProperties x="1134" y="411">
+    <element href="assembly.xml#Splitter0"/>
+  </visualProperties>
+  <visualProperties x="646" y="681">
+    <element href="assembly.xml#AsyncMediation2"/>
+  </visualProperties>
+  <visualProperties x="738" y="668">
+    <element href="assembly.xml#AsyncMediation3"/>
+  </visualProperties>
+  <visualProperties x="469" y="67">
+    <element href="assembly.xml#Call_Employee_Raas"/>
+  </visualProperties>
+  <visualProperties x="852" y="338">
+    <element href="assembly.xml#Employee_Raas"/>
+  </visualProperties>
+  <visualProperties x="907" y="348">
+    <element href="assembly.xml#WorkdayOutRest"/>
+  </visualProperties>
+  <visualProperties x="1007" y="371">
+    <element href="assembly.xml#AsyncMediation5"/>
+  </visualProperties>
+  <visualProperties x="1275" y="400">
+    <element href="assembly.xml#Splitter1"/>
+  </visualProperties>
+  <visualProperties x="1436" y="447">
+    <element href="assembly.xml#AsyncMediation6"/>
+  </visualProperties>
+  <visualProperties x="1150" y="669">
+    <element href="assembly.xml#WorkdayOutSoap"/>
+  </visualProperties>
+  <visualProperties x="1378" y="661">
+    <element href="assembly.xml#Route0"/>
+  </visualProperties>
+  <visualProperties x="1331" y="727">
+    <element href="assembly.xml#AsyncMediation7"/>
+  </visualProperties>
+  <visualProperties x="1245" y="149">
+    <element href="assembly.xml#AsyncMediation8"/>
+  </visualProperties>
+  <visualProperties x="1470" y="711">
+    <element href="assembly.xml#AsyncMediation4"/>
+  </visualProperties>
+  <visualProperties x="1653" y="97">
+    <element href="assembly.xml#PutIntegrationMessage"/>
+  </visualProperties>
+  <visualProperties>
+    <element href="assembly.xml#PutIntegrationMessage2"/>
+  </visualProperties>
+  <visualProperties x="478" y="71">
+    <element href="assembly.xml#Call_SpendCategory_RaaS"/>
+  </visualProperties>
+  <visualProperties x="1686" y="403">
+    <element href="assembly.xml#SpendCategory_Raas"/>
+  </visualProperties>
+  <visualProperties x="1890" y="349">
+    <element href="assembly.xml#AsyncMediation9"/>
+  </visualProperties>
+  <visualProperties x="2071" y="392">
+    <element href="assembly.xml#WorkdayOutRest0"/>
+  </visualProperties>
+  <visualProperties x="2278" y="399">
+    <element href="assembly.xml#Splitter2"/>
+  </visualProperties>
+  <visualProperties x="2424" y="387">
+    <element href="assembly.xml#AsyncMediation10"/>
+  </visualProperties>
+  <visualProperties x="2156" y="208">
+    <element href="assembly.xml#AsyncMediation11"/>
+  </visualProperties>
+  <visualProperties x="1352" y="852">
+    <element href="assembly.xml#AsyncMediation12"/>
+  </visualProperties>
+  <visualProperties x="1803" y="855">
+    <element href="assembly.xml#Route2"/>
+  </visualProperties>
+  <visualProperties x="1760" y="732">
+    <element href="assembly.xml#AsyncMediation13"/>
+  </visualProperties>
+  <visualProperties x="1764" y="719">
+    <element href="assembly.xml#CallPStoreErrorSuccessLogs"/>
+  </visualProperties>
+  <visualProperties x="1573" y="71">
+    <element href="assembly.xml#StoreErrorSuccessLogs"/>
+  </visualProperties>
+  <visualProperties x="477" y="885">
+    <element href="assembly.xml#PutIntegrationMessage0"/>
+  </visualProperties>
+  <visualProperties x="1074" y="836">
+    <element href="assembly.xml#PutIntegrationMessage1"/>
+  </visualProperties>
+  <visualProperties x="2177" y="484">
+    <element href="assembly.xml#PutIntegrationMessage3"/>
+  </visualProperties>
+  <visualProperties x="1093" y="432">
+    <element href="assembly.xml#PutIntegrationMessage4"/>
+  </visualProperties>
+  <visualProperties x="40" y="660">
+    <element href="assembly.xml#//@beans/@mixed.1/@mixed.85"/>
+  </visualProperties>
+  <visualProperties x="345" y="660">
+    <element href="assembly.xml#Note-Error"/>
+  </visualProperties>
+  <visualProperties x="1640" y="1560">
+    <element href="assembly.xml#Route1"/>
+  </visualProperties>
+  <visualProperties x="1765" y="1557">
+    <element href="assembly.xml#AsyncMediation14"/>
+  </visualProperties>
+  <visualProperties x="169" y="456">
+    <element href="assembly.xml#Update_IBAN"/>
+  </visualProperties>
+  <visualProperties x="303" y="482">
+    <element href="assembly.xml#AsyncMediation15"/>
+  </visualProperties>
+  <visualProperties x="1071" y="1547">
+    <element href="assembly.xml#Call_Update_IBAN_"/>
+  </visualProperties>
+  <visualProperties x="492" y="474">
+    <element href="assembly.xml#Route3"/>
+  </visualProperties>
+  <visualProperties x="1157" y="537">
+    <element href="assembly.xml#AsyncMediation16"/>
+  </visualProperties>
+  <visualProperties x="1272" y="530">
+    <element href="assembly.xml#AsyncMediation17"/>
+  </visualProperties>
+  <visualProperties x="1550" y="442">
+    <element href="assembly.xml#WorkdayOutSoap0"/>
+  </visualProperties>
+  <visualProperties x="1541" y="581">
+    <element href="assembly.xml#AsyncMediation18"/>
+  </visualProperties>
+  <visualProperties x="1714" y="576">
+    <element href="assembly.xml#AsyncMediation19"/>
+  </visualProperties>
+  <connections type="routesTo" sourceAnchorX="0.7446808510638298" sourceAnchorY="1.0" targetAnchorX="0.9230769230769231" targetAnchorY="0.13414634146341464">
+    <source href="assembly.xml#Retrieve_Expense_Files"/>
+    <target href="assembly.xml#Route"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.8714285714285714" sourceAnchorY="1.0" targetAnchorX="0.6423841059602649" targetAnchorY="0.6041666666666666">
+    <source href="assembly.xml#Process_Individual_File"/>
+    <target href="assembly.xml#AsyncMediation1"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.8653846153846154" sourceAnchorY="1.0" targetAnchorX="0.1390728476821192" targetAnchorY="0.5833333333333334">
+    <source href="assembly.xml#//@beans/@mixed.1/@splitter.1/@subRoute.0"/>
+    <target href="assembly.xml#AsyncMediation2"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.2872340425531915" targetAnchorX="0.4177215189873418" targetAnchorY="0.35135135135135137">
+    <source href="assembly.xml#AsyncMediation2"/>
+    <target href="assembly.xml#Call_Update_IBAN_"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.6554621848739496" sourceAnchorY="1.0" targetAnchorX="0.13709677419354838" targetAnchorY="0.0">
+    <source href="assembly.xml#StartHere"/>
+    <target href="assembly.xml#Call_Retrieve_Expense_Files"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.7757575757575758" sourceAnchorY="1.0" targetAnchorX="0.08609271523178808" targetAnchorY="0.45652173913043476">
+    <source href="assembly.xml#Employee_Raas"/>
+    <target href="assembly.xml#AsyncMediation5"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.6235294117647059" sourceAnchorY="1.0" targetAnchorX="0.3333333333333333" targetAnchorY="0.5384615384615384">
+    <source href="assembly.xml#WorkdayOutRest"/>
+    <target href="assembly.xml#Splitter1"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.7647058823529411" targetAnchorX="0.15894039735099338" targetAnchorY="0.391304347826087">
+    <source href="assembly.xml#//@beans/@mixed.1/@splitter.2/@subRoute.0"/>
+    <target href="assembly.xml#AsyncMediation6"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.8344370860927153" sourceAnchorY="0.4251968503937008" targetAnchorX="0.5384615384615384" targetAnchorY="0.6097560975609756">
+    <source href="assembly.xml#AsyncMediation1"/>
+    <target href="assembly.xml#Splitter"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.936046511627907" sourceAnchorY="0.4251968503937008" targetAnchorX="0.13675213675213677" targetAnchorY="0.3231707317073171">
+    <source href="assembly.xml#AsyncMediation"/>
+    <target href="assembly.xml#Splitter0"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.8703703703703703" sourceAnchorY="1.0" targetAnchorX="0.42735042735042733" targetAnchorY="0.41916167664670656">
+    <source href="assembly.xml#//@beans/@mixed.1/@route.1/@subRoute.0"/>
+    <target href="assembly.xml#Route2"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.75" sourceAnchorY="1.0" targetAnchorX="0.5364238410596026" targetAnchorY="0.9375">
+    <source href="assembly.xml#//@beans/@mixed.1/@route.1/@subRoute.1"/>
+    <target href="assembly.xml#AsyncMediation7"/>
+    <bendpoints sourceX="-3" sourceY="48" targetX="-742" targetY="219"/>
+    <bendpoints sourceX="746" sourceY="48" targetX="7" targetY="219"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.2916666666666667" targetAnchorX="0.2647058823529412" targetAnchorY="0.35135135135135137" curveType="curved">
+    <source href="assembly.xml#AsyncMediation5"/>
+    <target href="assembly.xml#WorkdayOutRest"/>
+    <bendpoints sourceX="277" sourceY="98" targetX="-41" targetY="122"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.8959537572254336" sourceAnchorY="0.28125" targetAnchorX="0.10982658959537572" targetAnchorY="0.08108108108108109" curveType="curved">
+    <source href="assembly.xml#AsyncMediation3"/>
+    <target href="assembly.xml#WorkdayOutSoap"/>
+    <bendpoints sourceX="115" sourceY="-202" targetX="-144" targetY="-185"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.2916666666666667" targetAnchorX="0.1902439024390244" targetAnchorY="0.3783783783783784">
+    <source href="assembly.xml#AsyncMediation8"/>
+    <target href="assembly.xml#PutIntegrationMessage"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.43670886075949367" sourceAnchorY="1.0" targetAnchorX="0.1717171717171717" targetAnchorY="0.43243243243243246">
+    <source href="assembly.xml#Call_SpendCategory_RaaS"/>
+    <target href="assembly.xml#Call_Employee_Raas"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.8507462686567164" sourceAnchorY="1.0" targetAnchorX="0.2913907284768212" targetAnchorY="0.5217391304347826">
+    <source href="assembly.xml#SpendCategory_Raas"/>
+    <target href="assembly.xml#AsyncMediation9"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.3333333333333333" targetAnchorX="0.38764044943820225" targetAnchorY="0.9459459459459459" curveType="curved">
+    <source href="assembly.xml#AsyncMediation9"/>
+    <target href="assembly.xml#WorkdayOutRest0"/>
+    <bendpoints sourceX="179" sourceY="216" targetX="-158" targetY="241"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.7696629213483146" sourceAnchorY="1.0" targetAnchorX="0.28205128205128205" targetAnchorY="0.38461538461538464">
+    <source href="assembly.xml#WorkdayOutRest0"/>
+    <target href="assembly.xml#Splitter2"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.8076923076923077" sourceAnchorY="1.0" targetAnchorX="0.18867924528301888" targetAnchorY="0.4673913043478261">
+    <source href="assembly.xml#//@beans/@mixed.1/@splitter.3/@subRoute.0"/>
+    <target href="assembly.xml#AsyncMediation10"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.17708333333333334" targetAnchorX="0.3755868544600939" targetAnchorY="0.5405405405405406">
+    <source href="assembly.xml#AsyncMediation11"/>
+    <target href="assembly.xml#PutIntegrationMessage2"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.7777777777777778" sourceAnchorY="1.0" targetAnchorX="0.17355371900826447">
+    <source href="assembly.xml#//@beans/@mixed.1/@route.2/@subRoute.0"/>
+    <target href="assembly.xml#Route1"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.6944444444444444" sourceAnchorY="1.0" targetAnchorX="0.7358490566037735" targetAnchorY="0.84375">
+    <source href="assembly.xml#//@beans/@mixed.1/@route.2/@subRoute.1"/>
+    <target href="assembly.xml#AsyncMediation13"/>
+    <bendpoints sourceX="1344" sourceY="-4" targetX="2" targetY="176"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.8465116279069768" sourceAnchorY="1.0" targetAnchorX="0.2185430463576159" targetAnchorY="0.3125">
+    <source href="assembly.xml#StoreErrorSuccessLogs"/>
+    <target href="assembly.xml#AsyncMediation8"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.7736625514403292" sourceAnchorY="1.0" targetAnchorX="0.18" targetAnchorY="0.6486486486486487">
+    <source href="assembly.xml#Call_Process_Individual_File"/>
+    <target href="assembly.xml#CallPStoreErrorSuccessLogs"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.6826923076923077" sourceAnchorY="1.0" targetAnchorX="0.16279069767441862" targetAnchorY="0.3858267716535433">
+    <source href="assembly.xml#//@beans/@mixed.1/@splitter.0/@subRoute.0"/>
+    <target href="assembly.xml#AsyncMediation"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.8208092485549133" sourceAnchorY="1.0" targetAnchorX="0.18543046357615894" targetAnchorY="0.625">
+    <source href="assembly.xml#WorkdayOutSoap"/>
+    <target href="assembly.xml#AsyncMediation4"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.8226600985221675" sourceAnchorY="0.8333333333333334" targetAnchorX="0.6666666666666666" targetAnchorY="0.9583333333333334" curveType="curved">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.25/@mixed.3"/>
+    <target href="assembly.xml#AsyncMediation12"/>
+    <bendpoints sourceX="445" sourceY="126" targetX="-189" targetY="172"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.5707317073170731" sourceAnchorY="1.0" targetAnchorX="0.31645569620253167" targetAnchorY="0.4583333333333333">
+    <source href="assembly.xml#PutIntegrationMessage"/>
+    <target href="assembly.xml#AsyncMediation11"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.8888888888888888" sourceAnchorY="1.0" targetAnchorX="0.107981220657277" targetAnchorY="0.35135135135135137">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.7/@mixed.3"/>
+    <target href="assembly.xml#PutIntegrationMessage0"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.509090909090909" sourceAnchorY="1.0" targetAnchorX="0.3568075117370892" targetAnchorY="0.6486486486486487">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.19/@mixed.3"/>
+    <target href="assembly.xml#PutIntegrationMessage1"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.8333333333333334" sourceAnchorY="1.0" targetAnchorX="0.49765258215962443" targetAnchorY="0.16216216216216217">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.57/@mixed.3"/>
+    <target href="assembly.xml#PutIntegrationMessage3"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.7361111111111112" sourceAnchorY="1.0" targetAnchorX="0.3145539906103286" targetAnchorY="0.40540540540540543">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.33/@mixed.3"/>
+    <target href="assembly.xml#PutIntegrationMessage4"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.9669421487603306" sourceAnchorY="0.43243243243243246" targetAnchorX="0.06060606060606061" targetAnchorY="0.3783783783783784">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.85"/>
+    <target href="assembly.xml#Note-Error"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.7352941176470589" targetAnchorX="0.11258278145695365" targetAnchorY="0.5208333333333334">
+    <source href="assembly.xml#//@beans/@mixed.1/@route.0/@subRoute.0"/>
+    <target href="assembly.xml#AsyncMediation0"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.8629032258064516" sourceAnchorY="1.0" targetAnchorX="0.13135593220338984" targetAnchorY="0.2972972972972973">
+    <source href="assembly.xml#Call_Retrieve_Expense_Files"/>
+    <target href="assembly.xml#Call_SpendCategory_RaaS"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.7962962962962963" sourceAnchorY="1.0" targetAnchorX="0.01904761904761905" targetAnchorY="0.48031496062992124">
+    <source href="assembly.xml#//@beans/@mixed.1/@route.3/@subRoute.0"/>
+    <target href="assembly.xml#AsyncMediation3"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.49074074074074076" sourceAnchorY="1.0" targetAnchorX="0.12578616352201258" targetAnchorY="0.47244094488188976">
+    <source href="assembly.xml#//@beans/@mixed.1/@route.3/@subRoute.1"/>
+    <target href="assembly.xml#AsyncMediation14"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.25" targetAnchorX="0.37572254335260113" targetAnchorY="0.4594594594594595">
+    <source href="assembly.xml#AsyncMediation14"/>
+    <target href="assembly.xml#WorkdayOutSoap"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.9078947368421053" sourceAnchorY="1.0" targetAnchorX="0.08176100628930817" targetAnchorY="0.9270833333333334" curveType="curved">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.91/@mixed.3"/>
+    <target href="assembly.xml#AsyncMediation12"/>
+    <bendpoints sourceX="246" sourceY="45" targetX="-201" targetY="77"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.7482517482517482" sourceAnchorY="1.0" targetAnchorX="0.22641509433962265">
+    <source href="assembly.xml#Update_IBAN"/>
+    <target href="assembly.xml#AsyncMediation15"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.47474747474747475" sourceAnchorY="1.0" targetAnchorX="0.20987654320987653" targetAnchorY="0.10810810810810811">
+    <source href="assembly.xml#Call_Employee_Raas"/>
+    <target href="assembly.xml#Call_Process_Individual_File"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.6521739130434783" sourceAnchorY="1.0" targetAnchorX="0.2727272727272727" targetAnchorY="0.21851851851851853">
+    <source href="assembly.xml#Call_Update_IBAN_"/>
+    <target href="assembly.xml#Route0"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.0" sourceAnchorY="0.125" targetAnchorX="0.15384615384615385" targetAnchorY="0.4431137724550898">
+    <source href="assembly.xml#AsyncMediation15"/>
+    <target href="assembly.xml#Route3"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.22916666666666666" targetAnchorX="0.16022099447513813" targetAnchorY="0.5135135135135135">
+    <source href="assembly.xml#AsyncMediation16"/>
+    <target href="assembly.xml#WorkdayOutSoap0"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="1.0" sourceAnchorY="0.7647058823529411" targetAnchorX="0.27044025157232704" targetAnchorY="0.46875">
+    <source href="assembly.xml#//@beans/@mixed.1/@route.4/@subRoute.0"/>
+    <target href="assembly.xml#AsyncMediation16"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.8362573099415205" sourceAnchorY="1.0" targetAnchorX="0.389937106918239" targetAnchorY="0.5729166666666666">
+    <source href="assembly.xml#//@beans/@mixed.1/@route.4/@subRoute.1"/>
+    <target href="assembly.xml#AsyncMediation17"/>
+    <bendpoints sourceX="963" sourceY="3" targetX="5" targetY="209"/>
+  </connections>
+  <connections type="routesTo" sourceAnchorX="0.6842105263157895" sourceAnchorY="1.0" targetAnchorX="0.1069182389937107" targetAnchorY="0.75">
+    <source href="assembly.xml#//@beans/@mixed.1/@mixed.101/@mixed.3"/>
+    <target href="assembly.xml#AsyncMediation18"/>
+    <bendpoints sourceX="-1" sourceY="53" targetX="-519" targetY="102"/>
+    <bendpoints sourceX="522" sourceY="51" targetX="4" targetY="100"/>
+  </connections>
+  <connections type="routesResponseTo" sourceAnchorX="0.6795580110497238" sourceAnchorY="1.0" targetAnchorX="0.29559748427672955" targetAnchorY="0.5543478260869565">
+    <source href="assembly.xml#WorkdayOutSoap0"/>
+    <target href="assembly.xml#AsyncMediation19"/>
+  </connections>
+  <swimlanes x="-507" y="385" name="Expense File(s) Retrieval Swimlane">
+    <elements href="assembly.xml#Retrieve_Expense_Files"/>
+    <elements href="assembly.xml#Route"/>
+    <elements href="assembly.xml#AsyncMediation0"/>
+  </swimlanes>
+  <swimlanes x="-557" y="1442" name="Process Individual File Swimlane">
+    <elements href="assembly.xml#Process_Individual_File"/>
+    <elements href="assembly.xml#AsyncMediation1"/>
+    <elements href="assembly.xml#PutIntegrationMessage0"/>
+    <elements href="assembly.xml#Splitter"/>
+    <elements href="assembly.xml#AsyncMediation"/>
+    <elements href="assembly.xml#PutIntegrationMessage1"/>
+    <elements href="assembly.xml#Splitter0"/>
+    <elements href="assembly.xml#AsyncMediation2"/>
+    <elements href="assembly.xml#Call_Update_IBAN_"/>
+    <elements href="assembly.xml#Route0"/>
+    <elements href="assembly.xml#Route2"/>
+    <elements href="assembly.xml#Route1"/>
+    <elements href="assembly.xml#AsyncMediation3"/>
+    <elements href="assembly.xml#AsyncMediation14"/>
+    <elements href="assembly.xml#WorkdayOutSoap"/>
+    <elements href="assembly.xml#AsyncMediation4"/>
+    <elements href="assembly.xml#AsyncMediation12"/>
+    <elements href="assembly.xml#AsyncMediation13"/>
+    <elements href="assembly.xml#AsyncMediation7"/>
+  </swimlanes>
+  <swimlanes x="-517" y="177" name="Main ">
+    <elements href="assembly.xml#StartHere"/>
+    <elements href="assembly.xml#Call_Retrieve_Expense_Files"/>
+    <elements href="assembly.xml#Call_SpendCategory_RaaS"/>
+    <elements href="assembly.xml#Call_Employee_Raas"/>
+    <elements href="assembly.xml#Call_Process_Individual_File"/>
+    <elements href="assembly.xml#CallPStoreErrorSuccessLogs"/>
+    <elements href="assembly.xml#StoreErrorSuccessLogs"/>
+    <elements href="assembly.xml#AsyncMediation8"/>
+    <elements href="assembly.xml#PutIntegrationMessage"/>
+    <elements href="assembly.xml#AsyncMediation11"/>
+    <elements href="assembly.xml#PutIntegrationMessage2"/>
+  </swimlanes>
+  <swimlanes x="-494" y="752" name="Prepare Employee Hashmap">
+    <elements href="assembly.xml#Employee_Raas"/>
+    <elements href="assembly.xml#AsyncMediation5"/>
+    <elements href="assembly.xml#PutIntegrationMessage4"/>
+    <elements href="assembly.xml#WorkdayOutRest"/>
+    <elements href="assembly.xml#Splitter1"/>
+    <elements href="assembly.xml#AsyncMediation6"/>
+  </swimlanes>
+  <swimlanes x="-486" y="1119" name="Prepare Spend Category Hashmap">
+    <elements href="assembly.xml#SpendCategory_Raas"/>
+    <elements href="assembly.xml#AsyncMediation9"/>
+    <elements href="assembly.xml#PutIntegrationMessage3"/>
+    <elements href="assembly.xml#WorkdayOutRest0"/>
+    <elements href="assembly.xml#Splitter2"/>
+    <elements href="assembly.xml#AsyncMediation10"/>
+  </swimlanes>
+  <swimlanes x="-548" y="1804" name="Swimlane">
+    <elements href="assembly.xml#//@beans/@mixed.1/@mixed.85"/>
+    <elements href="assembly.xml#Note-Error"/>
+  </swimlanes>
+  <swimlanes x="625" y="363" name="Update IBAN">
+    <elements href="assembly.xml#Update_IBAN"/>
+    <elements href="assembly.xml#AsyncMediation15"/>
+    <elements href="assembly.xml#Route3"/>
+    <elements href="assembly.xml#AsyncMediation16"/>
+    <elements href="assembly.xml#WorkdayOutSoap0"/>
+    <elements href="assembly.xml#AsyncMediation19"/>
+    <elements href="assembly.xml#AsyncMediation18"/>
+    <elements href="assembly.xml#AsyncMediation17"/>
+  </swimlanes>
+</wdnm:Diagram>

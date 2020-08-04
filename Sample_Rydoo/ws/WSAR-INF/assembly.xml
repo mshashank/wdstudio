@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+     xmlns="http://www.springframework.org/schema/beans"
+     xmlns:beans="http://www.springframework.org/schema/beans"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:cc="http://www.capeclear.com/assembly/10"
+     xmlns:cloud="urn:com.workday/esb/cloud/10.0"
+     xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"
+     xmlns:pi="urn:com.workday/picof"
+     xmlns:wd="urn:com.workday/bsvc"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <cc:assembly id="WorkdayAssembly" version="2019.6">
+        <cc:workday-in id="StartHere" routes-to="Call_Retrieve_Expense_Files">
+            <cc:integration-system name="Sample_Rydoo">
+        <cloud:param name="Validate Only Mode">
+          <cloud:type>
+            <cloud:simple-type>boolean</cloud:simple-type>
+          </cloud:type>
+          <cloud:default>
+            <cloud:boolean>false</cloud:boolean>
+          </cloud:default>
+        </cloud:param>
+        <cloud:retrieval-service name="Expenses_Retrieval_Service"/>
+        <cloud:report-service name="INT_Studio_Expense_Import_RS">
+          <cloud:report-alias description="CR Studio RaaS Rydoo Expense Import Integration" name="CR_Studio_RaaS_Rydoo_Expense_Import_Integration">
+            <cloud:report-reference description="CR Studio RaaS Rydoo Expense Import Integration" type="WID">7940a04132ba017cd048af9d6b17dd1f</cloud:report-reference>
+          </cloud:report-alias>
+          <cloud:report-alias description="CR Studio RaaS Expense Items Rydoo Expense Import Integration2" name="CR_Studio_RaaS_Expense_Items_Rydoo_Expense_Import_Integration2">
+            <cloud:report-reference description="CR Studio RaaS Expense Items Rydoo Expense Import Integration2" type="WID">99abe132a67c01dd4acc19d2b41c0c09</cloud:report-reference>
+          </cloud:report-alias>
+        </cloud:report-service>
+      </cc:integration-system>
+        </cc:workday-in>
+        <cc:route id="Route">
+            <cc:doc-iterator/>
+            <cc:sub-route name="SubRoute" routes-to="AsyncMediation0"/>
+        </cc:route>
+        <cc:async-mediation id="AsyncMediation0">
+            <cc:steps>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+INSIDE Retrieval Sub Assembly: ASYNC 0&#xD;
+####################################&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+                <cc:write id="Write" output="variable" output-variable="loopVar">
+                    <cc:message>
+                        <cc:text>&lt;root>&#xD;
+	@foreach{da.allFileNames as x}&#xD;
+	&lt;file>@{x}&lt;/file>&#xD;
+	@end{}&#xD;
+&lt;/root></cc:text>
+                    </cc:message>
+                </cc:write>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:async-mediation id="AsyncMediation1" routes-to="Splitter" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['p.error.log'] = new java.lang.StringBuilder()</cc:expression>
+                    <cc:expression>props['p.success.log'] = new java.lang.StringBuilder()</cc:expression>
+                    <cc:expression>props['p.IBAN.success.log'] = new java.lang.StringBuilder()</cc:expression>
+                    <cc:expression>props['counter'] = 0</cc:expression>
+                </cc:eval>
+                <cc:write id="Write" input="variable" input-variable="loopVar">
+                    <cc:message>
+                        <cc:message-content/>
+                    </cc:message>
+                </cc:write>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+Writing List of Files on SFTP to the Mediation Context Sub Assembly: ASYNC 1&#xD;
+props.counter = @{props['counter']}&#xD;
+&#xD;
+&#xD;
+</cc:text>
+                        <cc:message-content/>
+                        <cc:text>&#xD;
+####################################&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="PutIntegrationMessage0"/>
+        </cc:async-mediation>
+        <cc:local-out id="Call_Retrieve_Expense_Files" store-message="none" routes-response-to="Call_SpendCategory_RaaS" endpoint="vm://Sample_Rydoo/Retrieve_Expense_Files"/>
+        <cc:local-in id="Retrieve_Expense_Files" routes-to="Route"/>
+        <cc:splitter id="Splitter" split-until="util.isLastMessageInBatch()">
+            <cc:sub-route name="SubRoute" routes-to="AsyncMediation"/>
+            <cc:xml-stream-splitter xpath="root/file"/>
+        </cc:splitter>
+        <cc:local-in id="Process_Individual_File" routes-to="AsyncMediation1"/>
+        <cc:local-out id="Call_Process_Individual_File" store-message="none" routes-response-to="CallPStoreErrorSuccessLogs" endpoint="vm://Sample_Rydoo/Process_Individual_File"/>
+        <cc:async-mediation id="AsyncMediation" routes-to="Splitter0" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+Inside ASYNC Start to Split Files. Current File =  @{da.getFileName(props['counter'])}&#xD;
+####################################&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+                <cc:eval id="Eval">
+                    <cc:expression>da.toVar(parts[0].xpath('file'), 'current.file')</cc:expression>
+                    <cc:expression>props['counter'] = props['counter'] + 1</cc:expression>
+                    <cc:expression>props['counter2'] = 0 </cc:expression>
+                </cc:eval>
+                <cc:write id="Write" input="variable" input-variable="current.file">
+                    <cc:message>
+                        <cc:message-content/>
+                    </cc:message>
+                </cc:write>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="PutIntegrationMessage1"/>
+        </cc:async-mediation>
+        <cc:splitter id="Splitter0" split-until="util.isLastMessageInBatch()">
+            <cc:sub-route name="SubRoute" routes-to="AsyncMediation2"/>
+            <cc:xml-stream-splitter xpath="ArrayOfExpense/Expense"/>
+        </cc:splitter>
+        <cc:async-mediation id="AsyncMediation2" routes-to="Call_Update_IBAN_">
+            <cc:steps>
+                <cc:eval id="Eval0">
+                	<cc:expression>props['ExternalId'] = parts[0].xpath('Expense/User/ExternalId')</cc:expression>
+                    <cc:expression>props['ExpenseGuid'] = parts[0].xpath('Expense/ExpenseGuid')</cc:expression>
+                    <cc:expression>props['ExpenseStatus'] = parts[0].xpath('Expense/ExpenseStatus/Status')</cc:expression>
+                    <cc:expression>props['ExpenseStatusReason'] = parts[0].xpath('Expense/ExpenseStatus/Reason')</cc:expression>
+                    <cc:expression>props['Amount'] = parts[0].xpath('Expense/Amount')</cc:expression>
+                    <cc:expression>props['Date'] = parts[0].xpath('Expense/Date')</cc:expression>
+                    <cc:expression>props['UserEmail'] = parts[0].xpath('Expense/User/Email')</cc:expression>
+                    <cc:expression>props['UserGuid'] = parts[0].xpath('Expense/User/UserGUID')</cc:expression>
+                    <cc:expression>props['ExpenseAccountGuid'] = parts[0].xpath('Expense/ExpenseAccount/ExpenseAccountGuid')</cc:expression>
+                    <cc:expression>props['ExpenseAccountName'] = parts[0].xpath('Expense/ExpenseAccount/Name')</cc:expression>
+                    <cc:expression>props['ExpenseAccountActive'] = parts[0].xpath('Expense/ExpenseAccount/Active')</cc:expression>
+                    <cc:expression>props['ExpenseAccountAccountancyNumber'] = parts[0].xpath('Expense/ExpenseAccount/AccountancyNumber')</cc:expression>
+                    <cc:expression>props['ExpenseAccountAccountancyNumberExtra'] = parts[0].xpath('Expense/ExpenseAccount/AccountancyNumberExtra')</cc:expression>
+                    <cc:expression>props['Reimbursable'] = parts[0].xpath('Expense/Reimbursable')</cc:expression>
+                    <cc:expression>props['IsInvoice'] = parts[0].xpath('Expense/IsInvoice')</cc:expression>
+                    <cc:expression>props['Currency'] = parts[0].xpath('Expense/Currency')</cc:expression>
+                    <cc:expression>props['MerchantEnterpriseNumber'] = parts[0].xpath('Expense/MerchantEnterpriseNumber')</cc:expression>
+                    <cc:expression>props['Merchant'] = parts[0].xpath('Expense/Merchant')</cc:expression>
+                    <cc:expression>props['Note'] = parts[0].xpath('Expense/Note')</cc:expression>
+                    <cc:expression>props['VatAmount'] = parts[0].xpath('Expense/VatAmount')</cc:expression>
+                    <cc:expression>props['VatPercentage'] = parts[0].xpath('Expense/VatPercentage')</cc:expression>
+                    <cc:expression>props['VatCode'] = parts[0].xpath('Expense/VatCode')</cc:expression>
+                    <cc:expression>props['CalcCurrencyAmount1'] = parts[0].xpath('Expense/CalculatedCurrencies/CalculatedCurrency[1]/Amount')</cc:expression>
+                    <cc:expression>props['CalcCurrencyCurrency1'] = parts[0].xpath('Expense/CalculatedCurrencies/CalculatedCurrency[1]/Currency')</cc:expression>
+                    <cc:expression>props['CalcCurrencyVAT1'] = parts[0].xpath('Expense/CalculatedCurrencies/CalculatedCurrency[1]/VatAmount')</cc:expression>
+                    
+                    <cc:expression>props['CalcCurrencyAmount2'] = parts[0].xpath('Expense/CalculatedCurrencies/CalculatedCurrency[2]/Amount')</cc:expression>
+                    <cc:expression>props['CalcCurrencyCurrency2'] = parts[0].xpath('Expense/CalculatedCurrencies/CalculatedCurrency[2]/Currency')</cc:expression>
+                    <cc:expression>props['CalcCurrencyVAT2'] = parts[0].xpath('Expense/CalculatedCurrencies/CalculatedCurrency[2]/VatAmount')</cc:expression>
+                    
+                    
+                    <cc:expression>props['GroupGUID'] = parts[0].xpath('Expense/Group/GroupGuid')</cc:expression>
+                    <cc:expression>props['GroupName'] = parts[0].xpath('Expense/Group/Name')</cc:expression>
+                    <cc:expression>props['GroupId'] = parts[0].xpath('Expense/Group/GroupId')</cc:expression>
+                    <cc:expression>props['BranchGUID'] = parts[0].xpath('Expense/Branch/BranchGuid')</cc:expression>
+                    <cc:expression>props['BranchName'] = parts[0].xpath('Expense/Branch/Name')</cc:expression>
+                    <cc:expression>props['BranchId'] = parts[0].xpath('Expense/Branch/BranchId')</cc:expression>
+                    <cc:expression>props['BranchEnterpriseNumber'] = parts[0].xpath('Expense/Branch/EnterpriseNumber')</cc:expression>
+                    <cc:expression>props['BranchCurrency'] = parts[0].xpath('Expense/Branch/Currency')</cc:expression>
+                    <cc:expression>props['BranchAmount'] = parts[0].xpath('Expense/Branch/Amount')</cc:expression>
+                    <cc:expression>props['BranchVatAmount'] = parts[0].xpath('Expense/Branch/VatAmount')</cc:expression>
+                    <cc:expression>props['TripGUID'] = parts[0].xpath('Expense/Trip/TripGuid')</cc:expression>
+                    <cc:expression>props['TripName'] = parts[0].xpath('Expense/Trip/Name')</cc:expression>
+                    <cc:expression>props['TripStartDate'] = parts[0].xpath('Expense/Trip/StartDate')</cc:expression>
+                    <cc:expression>props['TripEndDate'] = parts[0].xpath('Expense/Trip/EndDate')</cc:expression>
+                    <cc:expression>props['TripID'] = parts[0].xpath('Expense/Trip/TripID')</cc:expression>
+                    <cc:expression>props['Country'] = parts[0].xpath('Expense/Country')</cc:expression>
+                    <cc:expression>props['XpdReference'] = parts[0].xpath('Expense/XpdReference')</cc:expression>
+                    <cc:expression>props['MatchStatus'] = parts[0].xpath('Expense/MatchStatus')</cc:expression>
+                    <cc:expression>props['PaymentMethod'] = parts[0].xpath('Expense/PaymentMethod')</cc:expression>
+                    <cc:expression>props['PaymentMethodGuid'] = parts[0].xpath('Expense/PaymentMethodGuid')</cc:expression>
+                    <cc:expression>props['PaymentMethodName'] = parts[0].xpath('Expense/PaymentMethodName')</cc:expression>
+                    <cc:expression>props['DateSubmitted'] = parts[0].xpath('Expense/DateSubmitted')</cc:expression>
+                    <cc:expression>props['DateApproved'] = parts[0].xpath('Expense/DateApproved')</cc:expression>
+                    <cc:expression>props['ApprovedBy'] = parts[0].xpath('Expense/ApprovedBy')</cc:expression>
+                    <cc:expression>props['DateControlled'] = parts[0].xpath('Expense/DateControlled')</cc:expression>
+                    <cc:expression>props['ControlledBy'] = parts[0].xpath('Expense/ControlledBy')</cc:expression>
+                    <cc:expression>props['PerDiemRateAmount'] = 	parts[0].xpath('Expense/PerDiem/Rate/Amount')</cc:expression>
+                    <cc:expression>props['PerDiemRateName'] = 		parts[0].xpath('Expense/PerDiem/Rate/Name')</cc:expression>
+                    <cc:expression>props['PerDiemDuration'] = 		parts[0].xpath('Expense/PerDiem/Duration')</cc:expression>
+                    <cc:expression>props['PerDiemRegion'] = 		parts[0].xpath('Expense/PerDiem/Region')</cc:expression>
+                    <cc:expression>props['PerDiemCurrency'] = 		parts[0].xpath('Expense/PerDiem/Currency')</cc:expression>
+                    <cc:expression>props['PerDiemDeductionName'] = 		parts[0].xpath('Expense/PerDiem/Deductions/Deduction/Name')</cc:expression>
+                    <cc:expression>props['PerDiemDeductionAmount'] = 		parts[0].xpath('Expense/PerDiem/Deductions/Deduction/Amount')</cc:expression>
+                    <cc:expression>props['PerDiemSupplementsName'] = 		parts[0].xpath('Expense/PerDiem/Supplements/Supplement/Name')</cc:expression>
+                    <cc:expression>props['PerDiemSupplementsAmount'] = 		parts[0].xpath('Expense/PerDiem/Supplements/Supplement/Amount')</cc:expression>
+                    <cc:expression>props['TravellerId'] = parts[0].xpath('Expense/TravellerId')</cc:expression>
+                    <cc:expression>props['CheckInDate'] = parts[0].xpath('Expense/CheckInDate')</cc:expression>
+                    <cc:expression>props['CheckOutDate'] = parts[0].xpath('Expense/CheckOutDate')</cc:expression>
+                    <cc:expression>props['NumberOfNights'] = parts[0].xpath('Expense/NumberOfNights')</cc:expression>
+                    <cc:expression>props['RejectReasons'] = parts[0].xpath('Expense/RejectReasons')</cc:expression>
+                    <cc:expression>props['LinkTravel'] = parts[0].xpath('Expense/LinkTravel')</cc:expression>
+                    <cc:expression>props['ValidationStatus'] = parts[0].xpath('Expense/ValidationStatus')</cc:expression>
+                    <cc:expression>props['CfdiGuid'] = parts[0].xpath('Expense/CfdiGuid')</cc:expression>
+                    <cc:expression>props['RfcNumber'] = parts[0].xpath('Expense/DateControlled')</cc:expression>
+                    <cc:expression>props['InvalidReason'] = parts[0].xpath('Expense/ControlledBy')</cc:expression>
+                    <cc:expression>props['UserIBAN'] = parts[0].xpath('Expense/User/IBAN')</cc:expression>
+                    
+                    
+                </cc:eval>
+                <cc:eval id="Eval">
+                    <cc:expression>vars['workday.employee.data'] = props['employee.hashmap'].get(props['ExternalId'])</cc:expression>
+                    <cc:expression>vars['expense.item.data'] = props['spend.category.hashmap'].get(props['ExpenseAccountName'])</cc:expression>
+                    <cc:expression>if(!util.isLastMessageInBatch()) { props['counter2'] = props['counter2'] + 1}</cc:expression>
+                </cc:eval>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+Inside ASYNC 2 Start to Split Records for Current File =  @{da.getFileName(props['counter'])}&#xD;
+####################################&#xD;
+&#xD;
+&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:async-mediation id="AsyncMediation3" routes-to="WorkdayOutSoap" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+ASYNC 3 Reached....Validate Only Mode On&#xD;
+####################################&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+                <cc:eval id="Eval">
+                    <cc:expression>props['workday.employee.id'] = vars['workday.employee.data'].xpath('wd:Report_Entry/wd:empID','wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration')</cc:expression>
+                    <cc:expression>props['workday.employee.company'] = vars['workday.employee.data'].xpath('wd:Report_Entry/wd:companyID','wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration')</cc:expression>
+                    <cc:expression>props['workday.employee.cc'] = vars['workday.employee.data'].xpath('wd:Report_Entry/wd:costCenterID','wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration')</cc:expression>
+                    <cc:expression>props['workday.employee.loc'] = vars['workday.employee.data'].xpath('wd:Report_Entry/wd:location_group/wd:locationID','wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration')</cc:expression>
+                    <cc:expression>props['workday.employee.SIT'] = vars['workday.employee.data'].xpath('wd:Report_Entry/wd:orgSIT_WID','wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration')</cc:expression>
+                    <cc:expression>props['workday.expense.item.id'] = vars['expense.item.data'].xpath('wd:Report_Entry/wd:expenseItemId','wd urn:com.workday.report/CR_Studio_RaaS_Expense_Items_Rydoo_Expense_Import_Integration2')</cc:expression>
+                </cc:eval>
+                <cc:write id="Write">
+                    <cc:message>
+                        <cc:text>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;
+&lt;env:Envelope&#xD;
+    xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&#xD;
+    xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;>&#xD;
+    &lt;env:Body>&#xD;
+        &lt;wd:Submit_Expense_Report_Request&#xD;
+            xmlns:wd=&quot;urn:com.workday/bsvc&quot;&#xD;
+            wd:Add_Only=&quot;true&quot;&#xD;
+            wd:version=&quot;v31.2&quot;>&#xD;
+            &lt;wd:Business_Process_Parameters>&#xD;
+                &lt;wd:Auto_Complete>true&lt;/wd:Auto_Complete>&#xD;
+            &lt;/wd:Business_Process_Parameters>&#xD;
+            &lt;wd:Expense_Report_Data>&#xD;
+                &lt;wd:Expense_Payee_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;Employee_ID&quot;>@{props['workday.employee.id']}&lt;/wd:ID>&#xD;
+                &lt;/wd:Expense_Payee_Reference>&#xD;
+                &lt;wd:Currency_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;Currency_ID&quot;>@{props['Currency']}&lt;/wd:ID>&#xD;
+                &lt;/wd:Currency_Reference>&#xD;
+                &lt;wd:Company_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;Company_Reference_ID&quot;>@{props['workday.employee.company']}&lt;/wd:ID>&#xD;
+                &lt;/wd:Company_Reference>&#xD;
+                &lt;wd:Locked_in_Workday>0&lt;/wd:Locked_in_Workday>&#xD;
+                &lt;wd:Expense_Report_Date>@{props['Date']}&lt;/wd:Expense_Report_Date>&#xD;
+                &lt;wd:Expense_Report_Total_Amount>@{props['Amount']}&lt;/wd:Expense_Report_Total_Amount>&#xD;
+                &lt;wd:Payment_Type_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;Payment_Type_ID&quot;>Wire_Expense&lt;/wd:ID>&#xD;
+                &lt;/wd:Payment_Type_Reference>&#xD;
+                &lt;!-- &lt;wd:Spend_Authorization_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;Spend_Authorization_ID&quot;>abcdef&lt;/wd:ID>&#xD;
+                &lt;/wd:Spend_Authorization_Reference> -->&#xD;
+                &lt;wd:Final_Expense_Report_for_Spend_Authorization>0&lt;/wd:Final_Expense_Report_for_Spend_Authorization>&#xD;
+                &lt;wd:Memo>@{props['UserIBAN']}&lt;/wd:Memo>&#xD;
+                &lt;wd:Expense_Report_Lines_Replacement_Data>&#xD;
+                    &lt;wd:Tax_Code_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Tax_Code_ID&quot;>@{props['VatCode']}&lt;/wd:ID>&#xD;
+                    &lt;/wd:Tax_Code_Reference>&#xD;
+                    &lt;wd:Tax_Amount>@{props['VatAmount']}&lt;/wd:Tax_Amount>&#xD;
+                    &lt;wd:Expense_Report_Line_Date>@{props['Date']}&lt;/wd:Expense_Report_Line_Date>&#xD;
+                    &lt;wd:Expense_Item_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Expense_Item_ID&quot;>@{props['workday.expense.item.id']}&lt;/wd:ID>&#xD;
+                    &lt;/wd:Expense_Item_Reference>&#xD;
+                    &lt;wd:Quantity>1&lt;/wd:Quantity>&#xD;
+                    &lt;wd:Amount>@{props['BranchAmount'] }&lt;/wd:Amount>&#xD;
+                    &lt;wd:Currency_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Currency_ID&quot;>@{props['Currency']}&lt;/wd:ID>&#xD;
+                    &lt;/wd:Currency_Reference>&#xD;
+                    &lt;wd:Currency_Rate>1&lt;/wd:Currency_Rate>&#xD;
+                    &lt;wd:Receipt_Included>1&lt;/wd:Receipt_Included>&#xD;
+                    &lt;wd:Personal_Expense>0&lt;/wd:Personal_Expense>&#xD;
+                    &lt;wd:Billable>0&lt;/wd:Billable>&#xD;
+                    &lt;wd:Worktag_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Custom_Organization_Reference_ID&quot;>INV_001&lt;/wd:ID>&#xD;
+                    &lt;/wd:Worktag_Reference>&#xD;
+                    &lt;wd:Worktag_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;WID&quot;>@{props['workday.employee.SIT']}&lt;/wd:ID>&#xD;
+                    &lt;/wd:Worktag_Reference>&#xD;
+                    &lt;wd:Worktag_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Location_ID&quot;>@{props['workday.employee.loc']}&lt;/wd:ID>&#xD;
+                    &lt;/wd:Worktag_Reference>&#xD;
+                    &lt;wd:Worktag_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Organization_Reference_ID&quot;>@{props['workday.employee.cc']}&lt;/wd:ID>&#xD;
+                    &lt;/wd:Worktag_Reference>&#xD;
+                    &lt;wd:Memo>Expense loaded by Studio Integration from Rydoo to Workday on @{util.currentDateTimeAsString('CET')}&lt;/wd:Memo>&#xD;
+                    &lt;wd:Expense_Item_Details_Data>&#xD;
+                        &lt;wd:Number_of_Persons>0&lt;/wd:Number_of_Persons>&#xD;
+                        &lt;wd:Number_of_Days>0&lt;/wd:Number_of_Days>&#xD;
+                        &lt;wd:Number_of_Hours>0&lt;/wd:Number_of_Hours>&#xD;
+                        &lt;wd:Number_of_Breakfasts_Provided>0&lt;/wd:Number_of_Breakfasts_Provided>&#xD;
+                        &lt;wd:Number_of_Lunches_Provided>0&lt;/wd:Number_of_Lunches_Provided>&#xD;
+                        &lt;wd:Number_of_Dinners_Provided>0&lt;/wd:Number_of_Dinners_Provided>&#xD;
+                        &lt;wd:Number_of_Nights_Private_Accommodation>0&lt;/wd:Number_of_Nights_Private_Accommodation>&#xD;
+                        &lt;wd:Daily_Rate>0&lt;/wd:Daily_Rate>&#xD;
+                        &lt;wd:Configurable_Boolean_1>0&lt;/wd:Configurable_Boolean_1>&#xD;
+                        &lt;wd:Configurable_Boolean_2>0&lt;/wd:Configurable_Boolean_2>&#xD;
+                        &lt;wd:Configurable_Boolean_3>0&lt;/wd:Configurable_Boolean_3>&#xD;
+                        &lt;wd:Configurable_Boolean_4>0&lt;/wd:Configurable_Boolean_4>&#xD;
+                        &lt;wd:Configurable_Boolean_5>0&lt;/wd:Configurable_Boolean_5>&#xD;
+                    &lt;/wd:Expense_Item_Details_Data>&#xD;
+                    &lt;!--&#xD;
+                    &lt;wd:Attachment_Data&#xD;
+                        wd:Content_Type=&quot;image/jpeg&quot;&#xD;
+                        wd:Filename=&quot;IMAGE2.jpeg&quot;&#xD;
+                        wd:Compressed=&quot;false&quot;>&#xD;
+                        &lt;wd:File_Content>&lt;/wd:File_Content>&#xD;
+                        &lt;wd:Comment>My Comment&lt;/wd:Comment>&#xD;
+                    &lt;/wd:Attachment_Data>&#xD;
+                    -->&#xD;
+                &lt;/wd:Expense_Report_Lines_Replacement_Data>&#xD;
+            &lt;/wd:Expense_Report_Data>&#xD;
+        &lt;/wd:Submit_Expense_Report_Request>&#xD;
+    &lt;/env:Body>&#xD;
+&lt;/env:Envelope></cc:text>
+                    </cc:message>
+                </cc:write>
+                <cc:set-headers id="SetHeaders"><cc:remove-headers/><cc:add-headers>
+    <cc:add-header name="X-Validate-Only" value="1"/>
+</cc:add-headers></cc:set-headers>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="AsyncMediation12"/>
+        </cc:async-mediation>
+        <cc:local-out id="Call_Employee_Raas" store-message="none" routes-response-to="Call_Process_Individual_File" endpoint="vm://Sample_Rydoo/Employee_Raas"/>
+        <cc:local-in id="Employee_Raas" routes-to="AsyncMediation5"/>
+        <cc:workday-out-rest id="WorkdayOutRest" routes-response-to="Splitter1" extra-path="@{intsys.reportService.getExtrapath('CR_Studio_RaaS_Rydoo_Expense_Import_Integration')}" method="GET"/>
+        <cc:async-mediation id="AsyncMediation5" routes-to="WorkdayOutRest" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['employee.hashmap'] = new java.util.HashMap()</cc:expression>
+                </cc:eval>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+INSIDE Employee HashMap Sub Assembly: ASYNC 5&#xD;
+####################################&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="PutIntegrationMessage4"/>
+        </cc:async-mediation>
+        <cc:splitter id="Splitter1">
+            <cc:sub-route name="SubRoute" routes-to="AsyncMediation6"/>
+            <cc:xml-stream-splitter namespaces="wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration" xpath="wd:Report_Data/wd:Report_Entry"/>
+        </cc:splitter>
+        <cc:async-mediation id="AsyncMediation6">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['wd.employee.id'] = parts[0].xpath('wd:Report_Entry/wd:empID','wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration') </cc:expression>
+                    <cc:expression>props['employee.hashmap'].put(props['wd.employee.id'],parts[0].text)</cc:expression>
+                </cc:eval>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:workday-out-soap id="WorkdayOutSoap" execute-when="lp.getSimpleData('Validate Only Mode') == false" routes-response-to="AsyncMediation4" application="Resource_Management" replace-with-soap-fault="true" version="v32.1"/>
+        <cc:route id="Route0">
+            <cc:mvel-strategy>
+                <cc:choose-route expression="vars['workday.employee.data'] != empty" route="SubRoute"/>
+                <cc:choose-route expression="true" route="Alternate"/>
+            </cc:mvel-strategy>
+            <cc:sub-route name="SubRoute" routes-to="Route2"/>
+            <cc:sub-route name="Alternate" routes-to="AsyncMediation7"/>
+        </cc:route>
+        <cc:async-mediation id="AsyncMediation7">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['p.error.log'].append('Expense record # ' # props['counter2'] #', in the file ' # da.getFileName(props['counter']) # ', No matching employee found in Workday for Rydoo worker ' # props['ExternalId'] #'\n')</cc:expression>
+                </cc:eval>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+&#xD;
+####################################&#xD;
+ASYNC 7 EMPLOYEE NOT FOUND ERROR!!!&#xD;
+####################################&#xD;
+&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:async-mediation id="AsyncMediation8" routes-to="PutIntegrationMessage" execute-steps-when="props['p.error.log'] != empty" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+ASYNC 8 PRINTING ERROR LOG&#xD;
+@{props['p.error.log'].toString()}&#xD;
+####################################&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+                <cc:write id="errorLog" output="variable" output-variable="errorLogVar">
+                    <cc:message>
+                        <cc:text>@{props['p.error.log'].toString()}</cc:text>
+                    </cc:message>
+                </cc:write>
+                <cc:store id="Store" output="variable" output-variable="errorLogVarOut" input="variable" input-variable="errorLogVar" createDocumentReference="true" expiresIn="P7D" isAttachment="false" summary="Error Log Summary" title="ErrorLog_@{util.currentDateAsString('CET').toString().substring(0,10).replace('-','_')}.txt"/>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:async-mediation id="AsyncMediation4">
+            <cc:steps>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+ASYNC 4 SUCCESS !!! Web Service Response for @{props['workday.employee.id']} in file @{da.getFileName(props['counter'])}&#xD;
+####################################&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+                <cc:eval id="Eval0">
+                    <cc:expression>props['p.success.log'].append('Expense record # ' # props['counter2'] # ', from file ' # da.getFileName(props['counter']) # ', the expense has been successfully added for Employee ID '# props['ExternalId'] #'\n')</cc:expression>
+                </cc:eval>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:local-out id="PutIntegrationMessage" execute-when="props['p.error.log'] != empty" routes-response-to="AsyncMediation11" endpoint="vm://wcc/PutIntegrationMessage"><cc:set name="is.message.severity" value="'ERROR'"/><cc:set name="is.message.summary" value="'Error(s) occured while processing some expenses from Rydoo. Please see the attached ErrorLog.txt under Output Files tab'"/><cc:set name="is.document.variable.name" value="'errorLogVarOut'"/><cc:set name="is.document.deliverable" value="'true'"/></cc:local-out>
+        <cc:local-out id="PutIntegrationMessage2" execute-when="props['p.success.log'] != empty" endpoint="vm://wcc/PutIntegrationMessage"><cc:set name="is.message.severity" value="'INFO'"/><cc:set name="is.message.summary" value="'Success Log attached. Please find it under the Output Files tab'"/><cc:set name="is.document.variable.name" value="'successLogVarOut'"/><cc:set name="is.document.deliverable" value="'true'"/></cc:local-out>
+        <cc:local-out id="Call_SpendCategory_RaaS" store-message="none" routes-response-to="Call_Employee_Raas" endpoint="vm://Sample_Rydoo/SpendCategory_Raas"/>
+        <cc:local-in id="SpendCategory_Raas" routes-to="AsyncMediation9"/>
+        <cc:async-mediation id="AsyncMediation9" routes-to="WorkdayOutRest0">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['spend.category.hashmap'] = new java.util.HashMap()</cc:expression>
+                </cc:eval>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+INSIDE Spend Category HashMap Sub Assembly: ASYNC 9&#xD;
+####################################&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="PutIntegrationMessage3"/>
+        </cc:async-mediation>
+        <cc:workday-out-rest id="WorkdayOutRest0" routes-response-to="Splitter2" extra-path="@{intsys.reportService.getExtrapath('CR_Studio_RaaS_Expense_Items_Rydoo_Expense_Import_Integration2')}" method="GET"/>
+        <cc:splitter id="Splitter2">
+            <cc:sub-route name="SubRoute" routes-to="AsyncMediation10"/>
+            <cc:xml-stream-splitter namespaces="wd urn:com.workday.report/CR_Studio_RaaS_Expense_Items_Rydoo_Expense_Import_Integration2" xpath="wd:Report_Data/wd:Report_Entry"/>
+        </cc:splitter>
+        <cc:async-mediation id="AsyncMediation10">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['wd.expense.item.name'] = parts[0].xpath('wd:Report_Entry/wd:expenseItemName','wd urn:com.workday.report/CR_Studio_RaaS_Expense_Items_Rydoo_Expense_Import_Integration2')</cc:expression>
+                    <cc:expression>props['spend.category.hashmap'].put(props['wd.expense.item.name'],parts[0].text)</cc:expression>
+                </cc:eval>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:async-mediation id="AsyncMediation11" routes-to="PutIntegrationMessage2" execute-steps-when="props['p.success.log'] != empty" handle-downstream-errors="true">
+            <cc:steps>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+ASYNC 11 PRINTING SUCCESS LOG&#xD;
+@{props['p.success.log'].toString()}&#xD;
+####################################&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+                <cc:write id="Write" output="variable" output-variable="successLogVar" input="message">
+                    <cc:message>
+                        <cc:text>@{props['p.success.log'].toString()}</cc:text>
+                    </cc:message>
+                </cc:write>
+                <cc:store id="Store0" output="variable" output-variable="successLogVarOut" input="variable" input-variable="successLogVar" createDocumentReference="true" expiresIn="P7D" isAttachment="false" summary="Success Log Summary" title="SuccessLog_@{util.currentDateAsString('CET').toString().substring(0,10).replace('-','_')}.txt"/>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:async-mediation id="AsyncMediation12">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['p.error.log'].append('Expense record # ' # props['counter2'] # ', in the file ' # da.getFileName(props['counter']) # ', error occurred while trying to add expense for worker ' # props['ExternalId'] # '. Error Message = ' # context.errorMessage #'\n')</cc:expression>
+                </cc:eval>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+ASYNC 12 WEB SERVICE ERROR!!! in Web Service Response for @{props['workday.employee.id']} in file @{da.getFileName(props['counter'])}&#xD;
+####################################&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:route id="Route2">
+            <cc:mvel-strategy>
+                <cc:choose-route expression="vars['expense.item.data'] !=empty" route="SubRoute"/>
+                <cc:choose-route expression="true" route="Alternate"/>
+            </cc:mvel-strategy>
+            <cc:sub-route name="SubRoute" routes-to="Route1"/>
+            <cc:sub-route name="Alternate" routes-to="AsyncMediation13"/>
+        </cc:route>
+        <cc:async-mediation id="AsyncMediation13">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['p.error.log'].append('Expense record # ' # props['counter2'] # ', in the file ' # da.getFileName(props['counter']) # ', for worker ' # props['ExternalId'] # ' no matching Expense Item found in Workday for the Rydoo expense called ' # props['ExpenseAccountName'] # '\n')</cc:expression>
+                </cc:eval>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+&#xD;
+####################################&#xD;
+ASYNC 13 EXPENSE NOT FOUND ERROR!!!&#xD;
+####################################&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:local-out id="CallPStoreErrorSuccessLogs" store-message="none" endpoint="vm://Sample_Rydoo/StoreErrorSuccessLogs"/>
+        <cc:local-in id="StoreErrorSuccessLogs" routes-to="AsyncMediation8"/>
+        <cc:local-out id="PutIntegrationMessage0" endpoint="vm://wcc/PutIntegrationMessage"><cc:set name="is.message.severity" value="'WARNING'"/><cc:set name="is.message.summary" value="'No files found on SFTP'"/></cc:local-out>
+        <cc:local-out id="PutIntegrationMessage1" endpoint="vm://wcc/PutIntegrationMessage"><cc:set name="is.message.severity" value="'WARNING'"/><cc:set name="is.message.summary" value="'The file ' # da.getFileName(props['counter']) # ' is empty.'"/><cc:set name="is.message.storage.enabled" value="false"/></cc:local-out>
+        <cc:local-out id="PutIntegrationMessage3" endpoint="vm://wcc/PutIntegrationMessage"><cc:set name="is.message.severity" value="'WARNING'"/><cc:set name="is.message.summary" value="'No expense items found in Workday for Rydoo. Make sure the expense item have been assigned the Expense Policy Group called ' # '&quot;Expense Employee Germany&quot; in the tenant'"/></cc:local-out>
+        <cc:local-out id="PutIntegrationMessage4" endpoint="vm://wcc/PutIntegrationMessage"><cc:set name="is.message.severity" value="'WARNING'"/><cc:set name="is.message.summary" value="'Error occurred while calling the employee report in Workday'"/><cc:set name="is.message.storage.enabled" value="false"/></cc:local-out>
+        <cc:send-error id="global-error-handler" rethrow-error="false" routes-to="Note-Error"/>
+        <cc:local-out id="Note-Error" endpoint="vm://wcc/PutIntegrationMessage">
+            <cc:set name="is.message.severity" value="'CRITICAL'"/>
+            <cc:set name="is.message.summary" value="'An error occurred while running the integration: ' # context.errorMessage # ' Please check the Integration Event server log file and/or the consolidated log file.'"/>
+        </cc:local-out>
+        <cc:route id="Route1">
+            <cc:mvel-strategy>
+                <cc:choose-route expression="lp.getSimpleData('Validate Only Mode') == true" route="SubRoute"/>
+                <cc:choose-route expression="lp.getSimpleData('Validate Only Mode') == false" route="Alternate"/>
+            </cc:mvel-strategy>
+            <cc:sub-route name="SubRoute" routes-to="AsyncMediation3"/>
+            <cc:sub-route name="Alternate" routes-to="AsyncMediation14"/>
+        </cc:route>
+        <cc:async-mediation id="AsyncMediation14" routes-to="WorkdayOutSoap">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['workday.employee.id'] = vars['workday.employee.data'].xpath('wd:Report_Entry/wd:empID','wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration')</cc:expression>
+                    <cc:expression>props['workday.employee.company'] = vars['workday.employee.data'].xpath('wd:Report_Entry/wd:companyID','wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration')</cc:expression>
+                    <cc:expression>props['workday.employee.cc'] = vars['workday.employee.data'].xpath('wd:Report_Entry/wd:costCenterID','wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration')</cc:expression>
+                    <cc:expression>props['workday.employee.loc'] = vars['workday.employee.data'].xpath('wd:Report_Entry/wd:location_group/wd:locationID','wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration')</cc:expression>
+                    <cc:expression>props['workday.employee.SIT'] = vars['workday.employee.data'].xpath('wd:Report_Entry/wd:orgSIT_WID','wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration')</cc:expression>
+                    <cc:expression>props['workday.expense.item.id'] = vars['expense.item.data'].xpath('wd:Report_Entry/wd:expenseItemId','wd urn:com.workday.report/CR_Studio_RaaS_Expense_Items_Rydoo_Expense_Import_Integration2')</cc:expression>
+                </cc:eval>
+                <cc:write id="Write">
+                    <cc:message>
+                        <cc:text>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;
+&lt;env:Envelope&#xD;
+    xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&#xD;
+    xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;>&#xD;
+    &lt;env:Body>&#xD;
+        &lt;wd:Submit_Expense_Report_Request&#xD;
+            xmlns:wd=&quot;urn:com.workday/bsvc&quot;&#xD;
+            wd:Add_Only=&quot;true&quot;&#xD;
+            wd:version=&quot;v31.2&quot;>&#xD;
+            &lt;wd:Business_Process_Parameters>&#xD;
+                &lt;wd:Auto_Complete>true&lt;/wd:Auto_Complete>&#xD;
+            &lt;/wd:Business_Process_Parameters>&#xD;
+            &lt;wd:Expense_Report_Data>&#xD;
+                &lt;wd:Expense_Payee_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;Employee_ID&quot;>@{props['workday.employee.id']}&lt;/wd:ID>&#xD;
+                &lt;/wd:Expense_Payee_Reference>&#xD;
+                &lt;wd:Currency_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;Currency_ID&quot;>@{props['Currency']}&lt;/wd:ID>&#xD;
+                &lt;/wd:Currency_Reference>&#xD;
+                &lt;wd:Company_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;Company_Reference_ID&quot;>@{props['workday.employee.company']}&lt;/wd:ID>&#xD;
+                &lt;/wd:Company_Reference>&#xD;
+                &lt;wd:Locked_in_Workday>0&lt;/wd:Locked_in_Workday>&#xD;
+                &lt;wd:Expense_Report_Date>@{props['Date']}&lt;/wd:Expense_Report_Date>&#xD;
+                &lt;wd:Expense_Report_Total_Amount>@{props['Amount']}&lt;/wd:Expense_Report_Total_Amount>&#xD;
+                &lt;wd:Payment_Type_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;Payment_Type_ID&quot;>Wire_Expense&lt;/wd:ID>&#xD;
+                &lt;/wd:Payment_Type_Reference>&#xD;
+                &lt;!-- &lt;wd:Spend_Authorization_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;Spend_Authorization_ID&quot;>abcdef&lt;/wd:ID>&#xD;
+                &lt;/wd:Spend_Authorization_Reference> -->&#xD;
+                &lt;wd:Final_Expense_Report_for_Spend_Authorization>0&lt;/wd:Final_Expense_Report_for_Spend_Authorization>&#xD;
+                &lt;wd:Memo>@{props['UserIBAN']}&lt;/wd:Memo>&#xD;
+                &lt;wd:Expense_Report_Lines_Replacement_Data>&#xD;
+                    &lt;wd:Tax_Code_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Tax_Code_ID&quot;>@{props['VatCode']}&lt;/wd:ID>&#xD;
+                    &lt;/wd:Tax_Code_Reference>&#xD;
+                    &lt;wd:Tax_Amount>@{props['VatAmount']}&lt;/wd:Tax_Amount>&#xD;
+                    &lt;wd:Expense_Report_Line_Date>@{props['Date']}&lt;/wd:Expense_Report_Line_Date>&#xD;
+                    &lt;wd:Expense_Item_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Expense_Item_ID&quot;>@{props['workday.expense.item.id']}&lt;/wd:ID>&#xD;
+                    &lt;/wd:Expense_Item_Reference>&#xD;
+                    &lt;wd:Quantity>1&lt;/wd:Quantity>&#xD;
+                    &lt;wd:Amount>@{props['BranchAmount'] }&lt;/wd:Amount>&#xD;
+                    &lt;wd:Currency_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Currency_ID&quot;>@{props['Currency']}&lt;/wd:ID>&#xD;
+                    &lt;/wd:Currency_Reference>&#xD;
+                    &lt;wd:Currency_Rate>1&lt;/wd:Currency_Rate>&#xD;
+                    &lt;wd:Receipt_Included>1&lt;/wd:Receipt_Included>&#xD;
+                    &lt;wd:Personal_Expense>0&lt;/wd:Personal_Expense>&#xD;
+                    &lt;wd:Billable>0&lt;/wd:Billable>&#xD;
+                    &lt;wd:Worktag_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Custom_Organization_Reference_ID&quot;>INV_001&lt;/wd:ID>&#xD;
+                    &lt;/wd:Worktag_Reference>&#xD;
+                    &lt;wd:Worktag_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;WID&quot;>@{props['workday.employee.SIT']}&lt;/wd:ID>&#xD;
+                    &lt;/wd:Worktag_Reference>&#xD;
+                    &lt;wd:Worktag_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Location_ID&quot;>@{props['workday.employee.loc']}&lt;/wd:ID>&#xD;
+                    &lt;/wd:Worktag_Reference>&#xD;
+                    &lt;wd:Worktag_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Organization_Reference_ID&quot;>@{props['workday.employee.cc']}&lt;/wd:ID>&#xD;
+                    &lt;/wd:Worktag_Reference>&#xD;
+                    &lt;wd:Memo>Expense loaded by Studio Integration from Rydoo to Workday on @{util.currentDateTimeAsString('CET')}&lt;/wd:Memo>&#xD;
+                    &lt;wd:Expense_Item_Details_Data>&#xD;
+                        &lt;wd:Number_of_Persons>0&lt;/wd:Number_of_Persons>&#xD;
+                        &lt;wd:Number_of_Days>0&lt;/wd:Number_of_Days>&#xD;
+                        &lt;wd:Number_of_Hours>0&lt;/wd:Number_of_Hours>&#xD;
+                        &lt;wd:Number_of_Breakfasts_Provided>0&lt;/wd:Number_of_Breakfasts_Provided>&#xD;
+                        &lt;wd:Number_of_Lunches_Provided>0&lt;/wd:Number_of_Lunches_Provided>&#xD;
+                        &lt;wd:Number_of_Dinners_Provided>0&lt;/wd:Number_of_Dinners_Provided>&#xD;
+                        &lt;wd:Number_of_Nights_Private_Accommodation>0&lt;/wd:Number_of_Nights_Private_Accommodation>&#xD;
+                        &lt;wd:Daily_Rate>0&lt;/wd:Daily_Rate>&#xD;
+                        &lt;wd:Configurable_Boolean_1>0&lt;/wd:Configurable_Boolean_1>&#xD;
+                        &lt;wd:Configurable_Boolean_2>0&lt;/wd:Configurable_Boolean_2>&#xD;
+                        &lt;wd:Configurable_Boolean_3>0&lt;/wd:Configurable_Boolean_3>&#xD;
+                        &lt;wd:Configurable_Boolean_4>0&lt;/wd:Configurable_Boolean_4>&#xD;
+                        &lt;wd:Configurable_Boolean_5>0&lt;/wd:Configurable_Boolean_5>&#xD;
+                    &lt;/wd:Expense_Item_Details_Data>&#xD;
+                    &lt;!--&#xD;
+                    &lt;wd:Attachment_Data&#xD;
+                        wd:Content_Type=&quot;image/jpeg&quot;&#xD;
+                        wd:Filename=&quot;IMAGE2.jpeg&quot;&#xD;
+                        wd:Compressed=&quot;false&quot;>&#xD;
+                        &lt;wd:File_Content>&lt;/wd:File_Content>&#xD;
+                        &lt;wd:Comment>My Comment&lt;/wd:Comment>&#xD;
+                    &lt;/wd:Attachment_Data>&#xD;
+                    -->&#xD;
+                &lt;/wd:Expense_Report_Lines_Replacement_Data>&#xD;
+            &lt;/wd:Expense_Report_Data>&#xD;
+        &lt;/wd:Submit_Expense_Report_Request>&#xD;
+    &lt;/env:Body>&#xD;
+&lt;/env:Envelope></cc:text>
+                    </cc:message>
+                </cc:write>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+ASYNC 14 Reached...preparing to call Workday Web Service for creating the expense&#xD;
+####################################&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="AsyncMediation12"/>
+        </cc:async-mediation>
+        <cc:local-in id="Update_IBAN" routes-to="AsyncMediation15"/>
+        <cc:async-mediation id="AsyncMediation15" routes-to="Route3">
+            <cc:steps>
+                <cc:eval id="Eval">
+                    <cc:expression>props['workday.employee.IBAN'] = vars['workday.employee.data'].xpath('wd:Report_Entry/wd:IBAN','wd urn:com.workday.report/CR_Studio_RaaS_Rydoo_Expense_Import_Integration')</cc:expression>
+                </cc:eval>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:local-out id="Call_Update_IBAN_" store-message="none" routes-response-to="Route0" endpoint="vm://Sample_Rydoo/Update_IBAN"/>
+        <cc:route id="Route3">
+            <cc:mvel-strategy>
+                <cc:choose-route expression="props['workday.employee.IBAN'] = empty || !props['workday.employee.IBAN'].equalsIgnoreCase(props['UserIBAN'])" route="IBAN_empty_or_diff"/>
+                <cc:choose-route expression="true" route="Default"/>
+            </cc:mvel-strategy>
+            <cc:sub-route name="IBAN_empty_or_diff" routes-to="AsyncMediation16"/>
+            <cc:sub-route name="Default" routes-to="AsyncMediation17"/>
+        </cc:route>
+        <cc:async-mediation id="AsyncMediation16" routes-to="WorkdayOutSoap0">
+            <cc:steps>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+ASYNC 16 IBAN empty in Workday&#xD;
+@{props['p.error.log'].toString()}&#xD;
+####################################&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+                <cc:write id="Write">
+                    <cc:message>
+                        <cc:text>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xD;
+&lt;env:Envelope&#xD;
+    xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;&#xD;
+    xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;>&#xD;
+    &lt;env:Body>&#xD;
+        &lt;wd:Submit_Payment_Election_Enrollment_Request&#xD;
+            xmlns:wd=&quot;urn:com.workday/bsvc&quot;&#xD;
+            wd:Retain_Unused_Worker_Bank_Accounts=&quot;true&quot;&#xD;
+            wd:version=&quot;v32.2&quot;>&#xD;
+            &lt;wd:Business_Process_Parameters>&#xD;
+                &lt;wd:Auto_Complete>true&lt;/wd:Auto_Complete>&#xD;
+            &lt;/wd:Business_Process_Parameters>&#xD;
+            &lt;wd:Payment_Election_Enrollment_Data>&#xD;
+                &lt;wd:Role_ID_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;Employee_ID&quot;>@{props['workday.employee.id']}&lt;/wd:ID>&#xD;
+                &lt;/wd:Role_ID_Reference>&#xD;
+                &lt;wd:Country_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;ISO_3166-1_Alpha-2_Code&quot;>@{props['external.IBAN.country.code']}&lt;/wd:ID>&#xD;
+                &lt;/wd:Country_Reference>&#xD;
+                &lt;wd:Currency_Reference>&#xD;
+                    &lt;wd:ID wd:type=&quot;Currency_ID&quot;>@{props['Currency']}&lt;/wd:ID>&#xD;
+                &lt;/wd:Currency_Reference>&#xD;
+                &lt;wd:Payment_Election_Rule_Group_Data>&#xD;
+                    &lt;wd:Payment_Election_Rule_Reference>&#xD;
+                        &lt;wd:ID wd:type=&quot;Payment_Election_Rule_ID&quot;>Expense_Payments&lt;/wd:ID>&#xD;
+                    &lt;/wd:Payment_Election_Rule_Reference>&#xD;
+                    &lt;wd:Payment_Election_Data>&#xD;
+                        &lt;wd:Order>1&lt;/wd:Order>&#xD;
+                        &lt;wd:Payment_Election_Rule_Reference>&#xD;
+                            &lt;wd:ID wd:type=&quot;Payment_Election_Rule_ID&quot;>Expense_Payments&lt;/wd:ID>&#xD;
+                        &lt;/wd:Payment_Election_Rule_Reference>&#xD;
+                        &lt;wd:Country_Reference>&#xD;
+                            &lt;wd:ID wd:type=&quot;ISO_3166-1_Alpha-2_Code&quot;>@{props['external.IBAN.country.code']}&lt;/wd:ID>&#xD;
+                        &lt;/wd:Country_Reference>&#xD;
+                        &lt;wd:Currency_Reference>&#xD;
+                            &lt;wd:ID wd:type=&quot;Currency_ID&quot;>@{props['Currency']}&lt;/wd:ID>&#xD;
+                        &lt;/wd:Currency_Reference>&#xD;
+                        &lt;wd:Payment_Type_Reference>&#xD;
+                            &lt;wd:ID wd:type=&quot;Payment_Type_ID&quot;>Wire_Expense&lt;/wd:ID>&#xD;
+                        &lt;/wd:Payment_Type_Reference>&#xD;
+                        &lt;wd:Worker_Bank_Account_Data>&#xD;
+                            &lt;wd:Country_Reference>&#xD;
+                                &lt;wd:ID wd:type=&quot;ISO_3166-1_Alpha-2_Code&quot;>@{props['external.IBAN.country.code']}&lt;/wd:ID>&#xD;
+                            &lt;/wd:Country_Reference>&#xD;
+                            &lt;wd:Currency_Reference>&#xD;
+                                &lt;wd:ID wd:type=&quot;Currency_ID&quot;>@{props['Currency']}&lt;/wd:ID>&#xD;
+                            &lt;/wd:Currency_Reference>&#xD;
+                            &lt;wd:Account_Type_Reference>&#xD;
+                                &lt;wd:ID wd:type=&quot;Bank_Account_Type_Code&quot;>SA&lt;/wd:ID>&#xD;
+                            &lt;/wd:Account_Type_Reference>&#xD;
+                            &lt;wd:Bank_Name>Default Bank from Rydoo Integration (added @{util.currentDateTimeAsString('CET')})&lt;/wd:Bank_Name>&#xD;
+                            &lt;wd:IBAN>@{props['UserIBAN'].toString()}&lt;/wd:IBAN>&#xD;
+                        &lt;/wd:Worker_Bank_Account_Data>&#xD;
+                        &lt;wd:Distribution_Balance>1&lt;/wd:Distribution_Balance>&#xD;
+                    &lt;/wd:Payment_Election_Data>&#xD;
+                &lt;/wd:Payment_Election_Rule_Group_Data>&#xD;
+            &lt;/wd:Payment_Election_Enrollment_Data>&#xD;
+        &lt;/wd:Submit_Payment_Election_Enrollment_Request>&#xD;
+    &lt;/env:Body>&#xD;
+&lt;/env:Envelope></cc:text>
+                    </cc:message>
+                </cc:write>
+                <cc:log id="Log0">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+--------The IBAN Web service--------&#xD;
+</cc:text>
+                        <cc:message-content/>
+                        <cc:text>&#xD;
+&#xD;
+------------------------&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+            </cc:steps>
+            <cc:send-error id="SendError" routes-to="AsyncMediation18"/>
+        </cc:async-mediation>
+        <cc:async-mediation id="AsyncMediation17">
+            <cc:steps>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+ASYNC 17 IBAN Update not required&#xD;
+&#xD;
+####################################&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:workday-out-soap id="WorkdayOutSoap0" routes-response-to="AsyncMediation19" application="Cash_Management" version="v32.2"/>
+        <cc:async-mediation id="AsyncMediation18">
+            <cc:steps>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+ASYNC 18 IBAN Update Error&#xD;
+####################################&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+                <cc:eval id="Eval">
+                    <cc:expression>props['p.error.log'].append('Expense record # ' # props['counter2'] # ', in the file ' # da.getFileName(props['counter']) # ', error occurred while trying to add/update IBAN for worker ' # props['ExternalId'] # '. Error Message = ' # context.errorMessage #'\n')</cc:expression>
+                </cc:eval>
+            </cc:steps>
+        </cc:async-mediation>
+        <cc:async-mediation id="AsyncMediation19">
+            <cc:steps>
+                <cc:log id="Log">
+                    <cc:log-message>
+                        <cc:text>&#xD;
+####################################&#xD;
+ASYNC 19 IBAN Updated successfully&#xD;
+Response from IBAN web service = @{context.message}&#xD;
+-----------&#xD;
+@{parts[0]}&#xD;
+####################################&#xD;
+&#xD;
+</cc:text>
+                    </cc:log-message>
+                </cc:log>
+                <cc:eval id="Eval">
+                    <cc:expression>props['p.IBAN.success.log'].append('IBAN addedd successfully for worker # ' # props['ExternalId'] # ', from file ' # da.getFileName(props['counter']) # '\n')</cc:expression>
+                </cc:eval>
+            </cc:steps>
+        </cc:async-mediation>
+    </cc:assembly>
+</beans>
